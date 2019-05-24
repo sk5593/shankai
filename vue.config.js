@@ -1,7 +1,7 @@
 // vue.config.js
 const entry = 'givemefive';
 module.exports = {
-    publicPath: '/webjars/',
+    publicPath: '',
     outputDir: 'target/classes/META-INF/resources/webjars',
     lintOnSave: true,
     pages:{
