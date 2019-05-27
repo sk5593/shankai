@@ -2,7 +2,8 @@
 const entry = 'givemefive';
 const apiUrl = 'http://api-dev.yeedev.com/apis/c';
 module.exports = {
-    publicPath: '/',
+    publicPath: '',
+    outputDir: 'target/classes/META-INF/resources/webjars',
     lintOnSave: true,
     pages:{
         givemefive: {
