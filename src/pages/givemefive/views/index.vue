@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <article class="content">
+        <article class="content" :class="{'hasAside': state&&state!='5'}">
             <header class="header">
                 <img class="img-bg-header" src="../lib/bg-header.png" alt="">
                 <div class="bg-title textcenter">
@@ -11,107 +11,275 @@
                 </div>
             </header>
             <main class="main-coupon">
-                <section class="coupon-quota textcenter">
+                <section class="coupon-quota textcenter" v-if="state&&state!=5">
                     <img class="img-coupon" src="../lib/coupon.png" alt="">
                 </section>
-                <section class="coupon-title textcenter">
-                    <div v-if="step=='1'" class="coupon-title-main">人气618，省钱攻略来袭</div>
-                    <div v-else-if="step=='2'">
-                        <div class="coupon-title-main">瓜分神券进行中</div>
-                        <div class="coupon-title-endtime">2019-06-20 24:00:00结束</div>
+                <section v-else-if="state==5">
+                    <div>
+                        <img class="img-coupon" src="../lib/coupon_slices.png" alt="">
                     </div>
                 </section>
-                <section class="user-list" v-if="step!='1'">
+                <section class="coupon-title textcenter">
+                    <div v-if="role==2">
+                        <div class="coupon-title-main">您的小伙伴邀您走向省钱巅峰</div>
+                        <div class="coupon-title-endtime">2019-06-20 24:00:00结束</div>
+                    </div>
+                    <div v-else-if="state==1" class="coupon-title-main">人气618，省钱攻略来袭</div>
+                    <div v-else-if="state==2||state==3">
+                        <div class="coupon-title-main">瓜分神券进行中</div>
+                        <div class="coupon-title-endtime">{{config.validDate}} 24:00:00结束</div>
+                    </div>
+                    <div v-else-if="state==4">
+                        <div class="coupon-title-main">小伙伴已就位，点击拆开</div>
+                        <div class="coupon-title-endtime">{{config.validDate}} 24:00:00结束</div>
+                    </div>
+                    <div v-else-if="state==5">
+                        <div class="coupon-title-endtime">优惠券将于6月16日前发放到有品账户，</div>
+                        <div class="coupon-title-endtime">可移至有品APP内查看并使用</div>
+                    </div>
+                </section>
+                <section class="user-list" v-if="state==2||state==3||state==4">
                     <ul class="" flex="main:justify">
-                        <li class="user-item">
+                        <li class="user-item" v-for="item in teamList" :key="'useritemreal'+item.id">
                             <div class="user-headimg real" flex="main:center cross:center">
-                                <img src="../lib/coupon.png" height="100%" alt="">
+                                <img :src="item.avatarUrl" height="100%" alt="">
                             </div>
-                            <div class="user-name textcenter">团长</div>
+                            <div v-if="item.role==1" class="user-name textcenter">团长</div>
                         </li>
-                        <li class="user-item" v-for="i in 4" :key="i">
+                        <li class="user-item" v-for="i in 5-teamList.length" :key="'useritemempty'+i">
                             <div class="user-headimg empty" flex="main:center cross:center">
                                 <span class="user-headimg-text">?</span>
                             </div>
                         </li>
                     </ul>
                 </section>
-                <section class="coupon-progress">
-                    <ul flex="cross:corsss">
-                        <li v-for="item in stepList" :key="'stepitemline'+item.id" :flex-box="item.portion" flex="cross:center" class="coupon-item" :class="{'reach current': item.id==1}">
-                            <div class="progress-line-box" flex-box="1" flex="cross:center">
-                                <hr flex-box="1" class="progress-line">
-                                <div class="progress-line-center" flex="main:center cross:center">
-                                    <div class="progress-line-center-point"></div>
+                <template v-if="state&&state!=5">
+                    <section class="coupon-progress">
+                        <ul flex="cross:corsss">
+                            <li v-for="item in stepList" :key="'stepitemline'+item.id" :flex-box="item.portion" flex="cross:center" class="coupon-item" :class="{'reach': item.key<state, 'current': item.key==state||(item.key==4&&state==5)}">
+                                <div class="progress-line-box" flex-box="1" flex="cross:center">
+                                    <hr flex-box="1" class="progress-line progress-line-rea">
+                                    <div class="progress-line-center" flex="main:center cross:center">
+                                        <div class="progress-line-center-point"></div>
+                                    </div>
+                                    <hr flex-box="1" class="progress-line" :class="{'progress-line-rea': item.key==4}">
                                 </div>
-                                <hr flex-box="1" class="progress-line">
-                            </div>
-                        </li>
-                    </ul>
-                    <ul flex="cross:top">
-                        <li v-for="item in stepList" :key="'stepitemname'+item.id" class="coupon-item reach current" :flex-box="item.portion">
-                            <div class="progress-name textcenter">
-                                <div>{{item.name}}</div>
-                                <div v-if="item.name2">{{item.name2}}</div>
-                            </div>
-                        </li>
-                    </ul>
-                </section>
-                <aside class="aside">
-                    <div class="aside-title" flex="cross:center">
-                        <div flex-box="1"><hr class="aside-title-line"></div>
-                        <div class="aside-title-word">规则描述</div>
-                        <div flex-box="1"><hr class="aside-title-line"></div>
+                            </li>
+                        </ul>
+                        <ul flex="cross:top">
+                            <li v-for="item in stepList" :key="'stepitemname'+item.id" class="coupon-item" :class="{'reach': item.key<state, 'current': item.key==state||(item.key==4&&state==5)}" :flex-box="item.portion">
+                                <div class="progress-name textcenter">
+                                    <div>{{item.name}}</div>
+                                    <div v-if="item.name2">{{item.name2}}</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+                    <summary class="summary" v-if="step!='4'">
+                        <div class="summary-title" flex="cross:center">
+                            <div flex-box="1"><hr class="summary-title-line"></div>
+                            <div class="summary-title-word">规则描述</div>
+                            <div flex-box="1"><hr class="summary-title-line"></div>
+                        </div>
+                        <div class="summary-content">
+                            <p class="summary-content-p">1.组团拼手气拆券，开团后成员可邀请好友参与。</p>
+                            <p class="summary-content-p">2. 拼团成功：限定日期内，组成五人团，即可瓜分总面值80元的Yeelight有品券。</p>
+                            <p class="summary-content-p">3. 拼团失败：限定时间内未组成五人团，即视为拼团失败。</p>
+                            <p class="summary-content-p">4. 优惠券发放：拼团成功后将于6月16日前发放到有品账户，优惠券仅限于有品平台使用。</p>
+                            <p class="summary-content-p">5. 通过优惠券下单不满免邮门槛，需按照正常规则支付运费。</p>
+                            <p class="summary-content-p">6. 优惠券仅限本人使用，不得转让、不兑换现金。</p>
+                            <p class="summary-content-p">7. 活动最终解释权归品牌所有。</p>
+                        </div>
+                    </summary>
+                </template>
+                
+                <summary class="summary-fin" v-else-if="state==5">
+                    <div class="summary-title" flex="cross:center">
+                        <div flex-box="1"><hr class="summary-title-line"></div>
+                        <div class="summary-title-word">看看小伙伴手气如何</div>
+                        <div flex-box="1"><hr class="summary-title-line"></div>
                     </div>
-                    <div class="aside-content">
-                        <p class="aside-content-p">1.组团拼手气拆券，开团后成员可邀请好友参与。</p>
-                        <p class="aside-content-p">2. 拼团成功：限定日期内，组成五人团，即可瓜分总面值80元的Yeelight有品券。</p>
-                        <p class="aside-content-p">3. 拼团失败：限定时间内未组成五人团，即视为拼团失败。</p>
-                        <p class="aside-content-p">4. 优惠券发放：拼团成功后将于6月16日前发放到有品账户，优惠券仅限于有品平台使用。</p>
-                        <p class="aside-content-p">5. 通过优惠券下单不满免邮门槛，需按照正常规则支付运费。</p>
-                        <p class="aside-content-p">6. 优惠券仅限本人使用，不得转让、不兑换现金。</p>
-                        <p class="aside-content-p">7. 活动最终解释权归品牌所有。</p>
+                    <div class="summary-content">
+                        <ul class="coupondis-list">
+                            <li v-for="item in usercouponList" class="item-coupondis" :key="'usercouponitem'+item.id" flex="cross:center">
+                                 <div class="user-item">
+                                    <div class="user-headimg real" flex="main:center cross:center">
+                                        <img src="../lib/coupon.png" height="100%" alt="">
+                                    </div>
+                                    <div v-if="item.role==1" class="user-name textcenter">团长</div>
+                                </div>
+                                <div class="jointeaminfo" flex-box="1">
+                                    <div class="weixin-name">{{item.name}}</div>
+                                    <div class="userjointime">{{item.time}}</div>
+                                </div>
+                                <div class="coupon-value">{{item.coupon}}元</div>
+                            </li>
+                        </ul>
                     </div>
-                </aside>
+                </summary>
             </main>
             <footer class="footer">
                 <img class="img-bg-bottom" src="../lib/bg-bottom.png" alt="">
             </footer>
         </article>
+        <aside class="aside" v-if="state&&state!=5">
+            <button class="btn-aside btn-openteam" @click="handleBth(state)">
+                <img src="../lib/logo.png" alt="" width="19px"> 
+                <span v-if="state==1" class="btn-aside-text">立即参团</span>
+                <span v-else-if="state==2 || state==3" class="btn-aside-text">呼唤小伙伴</span>
+                <span v-else-if="state==4" class="btn-aside-text">Give me five</span>
+            </button>
+        </aside>
     </div>
 </template>
 
 <script>
-    import { getQueryString } from '@/util/util'
+    import { getQueryString, validatenull } from '@/util/util';
+    import { getToken, setToken } from '@/util/auth'
+    import { getteam, jointeam, opencoupon, config } from '@/service/givemefive';
     export default {
         data(){
             return {
-                step: '2',
+                config: {
+                    valid: null,
+                    validDate: ''
+                },
+                state: 0, // 1.初始状态；2.团长开团；3.有小伙伴加入（不满5人）；4.已满团（满5人）;5.已开券
+                role: 1, // 角色，1.团长；2.团员
+                join: null, // 是否已加入
+                source: '', // 来源
+                teamId: '', // 团ID
+                teamList: [],
+                step: '2', // 当前进行的步骤
                 stepList: [{
                     id: 1,
                     name: '开团',
-                    portion: 2
+                    portion: 2,
+                    key: 1
                 }, {
                     id: 2,
                     name: '邀请好友',
                     name2: '团战',
-                    portion: 3
+                    portion: 3,
+                    key: 2
                 }, {
-                    id: 2,
+                    id: 3,
                     name: '限定日期',
                     name2: '满5人成团',
-                    portion: 3
+                    portion: 3,
+                    key: 3
+                }, {
+                    id: 4,
+                    name: '拆券并领取',
+                    portion: 2,
+                    key: 4
+                }],
+                usercouponList: [{
+                    id: 1,
+                    name: 'LUU',
+                    time: '5.20 10:20:30',
+                    coupon: 28.88,
+                    role: 1,
                 }, {
                     id: 2,
-                    name: '拆券并领取',
-                    portion: 2
-                }]
+                    name: 'LUU',
+                    time: '5.20 10:20:30',
+                    coupon: 28.88,
+                    role: 2,
+                }],
             }
         },
         mounted(){
-            let p = getQueryString('param');
-            // alert(p)
+            let token = getQueryString('timeline') || getToken();
+            if(token) setToken(token);
+            this.source = getQueryString('source');
+            this.teamId = getQueryString('teamId');
+            this.init();
         },
+        methods: {
+            init(){
+                config().then(res => {
+                    if(res.data){
+                        this.config = res.data
+                    }
+                    if(this.config.valid){
+                        this.vmGetteam();
+                    } else {
+                        alert('活动失效');
+                    }
+                })
+               
+            },
+            vmGetteam() {
+                getteam(this.source).then(res => {
+                    if(!validatenull(res.data)){
+                        let data = res.data;
+                        this.join = data.join;
+                        if(!this.join) {
+                            this.state = 1;
+                            return
+                        }
+                        this.role = data.role;
+                        // this.teamId = data.teamId;
+                        this.teamList = data.team;
+                        if(validatenull(this.teamList)){
+                            this.state = 1
+                        } else{
+                            this.teamId = this.teamList[0].teamId;
+                            if(this.teamList.length==1){
+                                this.state = 2;
+                            } else if(this.teamList.length<5){
+                                this.state = 3
+                            } else {
+                                this.state = 4;
+                            }
+                            this.initMessage();
+                        }
+                    }
+                });
+            },
+            initTeamInfo(data) {
+                this.role = data.role;
+                this.join = data.join;
+            },
+            initMessage() {
+                try{
+                    wx.miniProgram.postMessage({
+                        teamId: this.teamId
+                    });
+                }catch(e){
+                    console.log(e);
+                }
+            },
+            handleBth(state){
+                if(state == 1 || this.role == 2) {
+                    this.vmJointeam();
+                } else if(state == 4){
+                    this.vmOpencoupon();
+                } else {
+                    alert('点击右上角转发');
+                }
+            },
+            vmJointeam(){
+                jointeam(this.source, this.teamId).then(res => {
+                    let data = res.data;
+                    this.role = data.role;
+                    if(!this.teamId){
+                        this.teamId = data.teamId;
+                        this.initMessage();
+                    }
+                    this.teamList.push(data);
+                })
+            },
+            vmOpencoupon(){
+                opencoupon().then(res => {
+                    if(res.success) {
+                        this.state = 5;
+                    }
+                })
+            },
+
+        }
     }
 </script>
 
@@ -132,10 +300,16 @@
     $pageWidthMaxRem: 18.75rem;
     $mainFontColor: #333333;
     $userColor: #CEA460;
+    $asideBtnHeight: 50px;
     .container{
+        position: relative;
         max-width: $pageWidthMaxPx;
         margin: 0 auto;
         color: $mainFontColor;
+        min-height: 100vh;
+    }
+    .content.hasAside{
+        padding-bottom: $asideBtnHeight;
     }
     .header{
         position: relative;
@@ -255,6 +429,15 @@
         }
     }
     .current{
+        .progress-name{
+            color: $userColor;
+        }
+        .progress-line-center-point{
+            background: $userColor;
+        }
+        .progress-line-rea{
+            border-top: 1px solid $userColor;
+        }
         .progress-line-center{
             width: 0.55rem;
             height: 0.55rem;
@@ -263,33 +446,92 @@
         }
     }
 
-    .aside{
+    .summary{
         margin-top: 2.5rem;
     }
-    .aside-title-line{
+    .summary-fin{
+        margin-top: 2.075rem;
+    }
+    .summary-title-line{
         margin: 0;
         border: none;
         border-top: 1px solid #CEA460;
     }
-    .aside-title-word{
+    .summary-title-word{
         margin: 0 .2rem;
         font-size: .65rem;
         font-family: PingFangSC-Regular;
         color:rgba(51,51,51,1);
         line-height: 1;
     }
-    .aside-content{
-        margin-top: 1.025rem;
-        font-size: .6rem;
-        font-family:PingFangSC-Light;
-        font-weight:300;
-        color:rgba(51,51,51,1);
-        line-height: 1rem;
-        .aside-content-p+.aside-content-p{
-            margin-top: .6rem;
+    .summary-content{
+        margin-top: 1.225rem;
+        .summary-content-p{
+            font-size: .6rem;
+            font-family:PingFangSC-Light;
+            font-weight:300;
+            color:rgba(51,51,51,1);
+            line-height: 1rem;
+            // &+.summary-content-p{
+                margin-top: .6rem;
+            // }
         }
     }
+
+    .coupondis-list{
+        margin-top: 2rem;
+    }
+    .item-coupondis + .item-coupondis{
+        margin-top: 1.65rem;
+    }
+    .jointeaminfo{
+        padding: 0 1rem;
+    }
+    .weixin-name{
+        font-size: .7rem;
+        font-family: PingFangSC-Medium;
+        font-weight: 500;
+        color: rgba(51,51,51,1);
+        line-height: 1;
+    }
+    .userjointime{
+        margin-top: .5rem;
+        font-size: .55rem;
+        font-family: PingFangSC-Light;
+        font-weight: 300;
+        color: rgba(102,102,102,1);
+        line-height: 1;
+    }
+    .coupon-value{
+        font-size: .75rem;
+        font-family: PingFangSC-Medium;
+        font-weight: 500;
+        color: rgba(51,51,51,1);
+    }
+
     .img-bg-bottom{
         width: 100%;
+    }
+
+    .aside{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    .btn-aside{
+        height: $asideBtnHeight;
+        width: 100%;
+        background: $userColor;
+        color:rgba(255,255,255,1);
+        line-height: 1;
+        cursor: pointer;
+        touch-action: manipulation;
+    }
+    .btn-aside-text{
+        vertical-align: middle; 
+        margin-left: 10px;
+        font-size: 16px;
+        font-family:PingFangSC-Regular;
     }
 </style>

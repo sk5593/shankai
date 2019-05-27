@@ -5,6 +5,11 @@ import '@/styles/normalize.scss'
 import './lib/base.scss'
 import '@/styles/flex.css'
 
+// import {AlertPlugin, LoadingPlugin, ToastPlugin} from 'vux'
+// Vue.use(AlertPlugin)
+// Vue.use(LoadingPlugin)
+// Vue.use(ToastPlugin)
+
 Vue.config.productionTip = false
 
 new Vue({

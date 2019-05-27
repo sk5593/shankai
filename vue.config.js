@@ -1,5 +1,6 @@
 // vue.config.js
 const entry = 'givemefive';
+const apiUrl = 'http://api-dev.yeedev.com/apis/c';
 module.exports = {
     publicPath: '/',
     lintOnSave: true,
@@ -13,6 +14,12 @@ module.exports = {
         host: 'localhost.yeelight.com',
         port: 80,
         open: true,
-        openPage: `${entry}.html`
+        openPage: `${entry}.html`,
+        proxy: {
+            '/v1/user-coupons': {
+                target: apiUrl,
+                ws: true
+            }
+        }
     }
 }
