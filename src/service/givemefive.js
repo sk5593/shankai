@@ -23,7 +23,7 @@ export const jointeam = (source, teamId) => {
 
 export const opencoupon = () => {
     return request({
-        url: '/apis/c/v1/user-coupons/youpin/w/join/team',
+        url: '/apis/c/v1/user-coupons/youpin/w/open/coupon',
         method: 'post'
     })
 }

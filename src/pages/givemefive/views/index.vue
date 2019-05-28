@@ -2,22 +2,22 @@
     <div class="container">
         <article class="content" :class="{'hasAside': state&&state!='5'}">
             <header class="header">
-                <img class="img-bg-header" src="../lib/bg-header.png" alt="">
+                <img class="img-bg-header" src="/img/fivemefive/bg-header.png" alt="">
                 <div class="bg-title textcenter">
-                    <div><img class="img-bg-title" src="../lib/bg-title.png" alt=""></div>
+                    <div><img class="img-bg-title" src="/img/fivemefive/bg-title.png" alt=""></div>
                     <div class="bg-title-word">
-                        <span>五人团战，抢“光”618</span>
+                        <img class="img-bg-title-2" src="/img/fivemefive/bg-title-2.png" alt="">
                     </div>
                 </div>
             </header>
             <main class="main-coupon">
                 <section v-if="state&&state!=5" class="coupon-quota textcenter">
-                    <img class="img-coupon" src="../lib/coupon.png" alt="">
+                    <img class="img-coupon" src="/img/fivemefive/coupon.png" alt="">
                 </section>
                 <section v-else-if="state==5" class="coupon-quota textcenter">
                     <div class="coupon-box">
                         <div class="coupon-value">{{self.coupon}}</div>
-                        <img class="img-coupon" src="../lib/coupon_slices.png" alt="">
+                        <img class="img-coupon" src="/img/fivemefive/coupon_slices.png" alt="">
                     </div>
                 </section>
                 <section class="coupon-title textcenter">
@@ -83,12 +83,12 @@
                             <div flex-box="1"><hr class="summary-title-line"></div>
                         </div>
                         <div class="summary-content">
-                            <p class="summary-content-p">1.组团拼手气拆券，开团后成员可邀请好友参与。</p>
-                            <p class="summary-content-p">2. 拼团成功：限定日期内，组成五人团，即可瓜分总面值80元的Yeelight有品券。</p>
+                            <p class="summary-content-p">1. 组团拼手气拆券，开团后成员可邀请好友参与。</p>
+                            <p class="summary-content-p">2. 拼团成功：限定日期内，组成五人团，即可瓜分总面值100元的Yeelight有品券。</p>
                             <p class="summary-content-p">3. 拼团失败：限定时间内未组成五人团，即视为拼团失败。</p>
-                            <p class="summary-content-p">4. 优惠券发放：拼团成功后将于6月16日前发放到有品账户，优惠券仅限于有品平台使用。</p>
+                            <p class="summary-content-p">4. 优惠券发放：拼团成功后将于6月16日前陆续发放到有品账户，请及时关注。优惠券仅限于有品平台使用，使用日期为6月17日-6月18日。</p>
                             <p class="summary-content-p">5. 通过优惠券下单不满免邮门槛，需按照正常规则支付运费。</p>
-                            <p class="summary-content-p">6. 优惠券仅限本人使用，不得转让、不兑换现金。</p>
+                            <p class="summary-content-p">6. 优惠券仅限本人使用，不得转让，不兑换现金。</p>
                             <p class="summary-content-p">7. 活动最终解释权归品牌所有。</p>
                         </div>
                     </summary>
@@ -105,7 +105,7 @@
                             <li v-for="item in teamList" class="item-coupondis" :key="'usercouponitem'+item.id" flex="cross:center">
                                  <div class="user-item">
                                     <div class="user-headimg real" flex="main:center cross:center">
-                                        <img src="../lib/coupon.png" height="100%" alt="">
+                                        <img :src="item.avatarUrl" height="100%" alt="">
                                     </div>
                                     <div v-if="item.role==1" class="user-name textcenter">团长</div>
                                 </div>
@@ -120,25 +120,25 @@
                 </summary>
             </main>
             <footer class="footer">
-                <img class="img-bg-bottom" src="../lib/bg-bottom.png" alt="">
+                <img class="img-bg-bottom" src="/img/fivemefive/bg-bottom.png" alt="">
             </footer>
         </article>
         <template v-if="state">
             <aside class="aside" v-if="state==1 || (join==false&&state<4) ">
                 <button class="btn-aside btn-openteam" @click="handleBth">
-                    <img src="../lib/logo.png" alt="" width="19px"> 
+                    <img src="/img/fivemefive/logo.png" alt="" width="19px"> 
                     <span class="btn-aside-text">立即参团</span>
                 </button>
             </aside>
             <aside class="aside" v-else-if="state==2 || state==3">
                 <button class="btn-aside btn-openteam" @click="handleBth">
-                    <img src="../lib/logo.png" alt="" width="19px"> 
+                    <img src="/img/fivemefive/logo.png" alt="" width="19px"> 
                     <span class="btn-aside-text">呼唤小伙伴</span>
                 </button>
             </aside>
             <aside class="aside" v-else-if="state==4 && join">
                 <button class="btn-aside btn-openteam" @click="handleBth">
-                    <img src="../lib/logo.png" alt="" width="19px"> 
+                    <img src="/img/fivemefive/logo.png" alt="" width="19px"> 
                     <span class="btn-aside-text">Give me five</span>
                 </button>
             </aside>
@@ -326,6 +326,13 @@
 <style>
     body{
         background: #FAF5EC;
+        padding-bottom: env(safe-area-inset-bottom);
+        font-family: -apple-system,Helvetica,sans-serif;
+    }
+    @supports(bottom: env(safe-area-inset-bottom)){
+        div{
+            margin-bottom: env(safe-area-inset-bottom);
+        }
     }
 </style>
 
@@ -364,6 +371,9 @@
         .img-bg-title{
             width: 17rem;
         }
+        .img-bg-title-2{
+            width: 10.75rem;
+        }
         .bg-title-word{
             margin-top: 1rem;
             font-size: 1rem;
@@ -385,7 +395,7 @@
     .coupon-value{
         position: absolute;
         top: 2rem;
-        left: 1.75rem;
+        left: 1.85rem;
         font-size: 3.75rem;
         font-weight:bold;
         color:rgba(255,255,255,1);
