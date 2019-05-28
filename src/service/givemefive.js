@@ -1,9 +1,12 @@
 import request from './index';
 
-export const getteam = () => {
+export const getteam = (teamId) => {
     return request({
         url: '/v1/user-coupons/youpin/r/get/team',
-        method: 'get'
+        method: 'get',
+        params: {
+            teamId
+        }
     })
 }
 

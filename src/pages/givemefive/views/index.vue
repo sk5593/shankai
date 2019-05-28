@@ -11,20 +11,21 @@
                 </div>
             </header>
             <main class="main-coupon">
-                <section class="coupon-quota textcenter" v-if="state&&state!=5">
+                <section v-if="state&&state!=5" class="coupon-quota textcenter">
                     <img class="img-coupon" src="../lib/coupon.png" alt="">
                 </section>
-                <section v-else-if="state==5">
-                    <div>
+                <section v-else-if="state==5" class="coupon-quota textcenter">
+                    <div class="coupon-box">
+                        <div class="coupon-value">{{self.coupon}}</div>
                         <img class="img-coupon" src="../lib/coupon_slices.png" alt="">
                     </div>
                 </section>
                 <section class="coupon-title textcenter">
-                    <div v-if="role==2">
+                    <div v-if="state==1" class="coupon-title-main">人气618，省钱攻略来袭</div>
+                    <div v-else-if="join===false">
                         <div class="coupon-title-main">您的小伙伴邀您走向省钱巅峰</div>
                         <div class="coupon-title-endtime">2019-06-20 24:00:00结束</div>
                     </div>
-                    <div v-else-if="state==1" class="coupon-title-main">人气618，省钱攻略来袭</div>
                     <div v-else-if="state==2||state==3">
                         <div class="coupon-title-main">瓜分神券进行中</div>
                         <div class="coupon-title-endtime">{{config.validDate}} 24:00:00结束</div>
@@ -101,7 +102,7 @@
                     </div>
                     <div class="summary-content">
                         <ul class="coupondis-list">
-                            <li v-for="item in usercouponList" class="item-coupondis" :key="'usercouponitem'+item.id" flex="cross:center">
+                            <li v-for="item in teamList" class="item-coupondis" :key="'usercouponitem'+item.id" flex="cross:center">
                                  <div class="user-item">
                                     <div class="user-headimg real" flex="main:center cross:center">
                                         <img src="../lib/coupon.png" height="100%" alt="">
@@ -109,10 +110,10 @@
                                     <div v-if="item.role==1" class="user-name textcenter">团长</div>
                                 </div>
                                 <div class="jointeaminfo" flex-box="1">
-                                    <div class="weixin-name">{{item.name}}</div>
-                                    <div class="userjointime">{{item.time}}</div>
+                                    <div class="weixin-name">{{item.nickName}}</div>
+                                    <div class="userjointime">{{item.joinTime}}</div>
                                 </div>
-                                <div class="coupon-value">{{item.coupon}}元</div>
+                                <div class="item-coupon-value">{{item.coupon}}元</div>
                             </li>
                         </ul>
                     </div>
@@ -122,12 +123,22 @@
                 <img class="img-bg-bottom" src="../lib/bg-bottom.png" alt="">
             </footer>
         </article>
-        <aside class="aside" v-if="state&&state!=5">
-            <button class="btn-aside btn-openteam" @click="handleBth(state)">
+        <aside class="aside" v-if="state==1 || (join===false&&state&&state<4) ">
+            <button class="btn-aside btn-openteam" @click="handleBth">
                 <img src="../lib/logo.png" alt="" width="19px"> 
-                <span v-if="state==1" class="btn-aside-text">立即参团</span>
-                <span v-else-if="state==2 || state==3" class="btn-aside-text">呼唤小伙伴</span>
-                <span v-else-if="state==4" class="btn-aside-text">Give me five</span>
+                <span class="btn-aside-text">立即参团</span>
+            </button>
+        </aside>
+        <aside class="aside" v-else-if="state==2 || state==3">
+            <button class="btn-aside btn-openteam" @click="handleBth">
+                <img src="../lib/logo.png" alt="" width="19px"> 
+                <span class="btn-aside-text">呼唤小伙伴</span>
+            </button>
+        </aside>
+        <aside class="aside" v-if="state==4 && join">
+            <button class="btn-aside btn-openteam" @click="handleBth">
+                <img src="../lib/logo.png" alt="" width="19px"> 
+                <span class="btn-aside-text">Give me five</span>
             </button>
         </aside>
     </div>
@@ -146,9 +157,11 @@
                 },
                 state: 0, // 1.初始状态；2.团长开团；3.有小伙伴加入（不满5人）；4.已满团（满5人）;5.已开券
                 role: 1, // 角色，1.团长；2.团员
-                join: null, // 是否已加入
+                join: false, // 是否已加入
+                bind: false, //是否已绑定小米账号
                 source: '', // 来源
                 teamId: '', // 团ID
+                self: {}, //个人信息
                 teamList: [],
                 step: '2', // 当前进行的步骤
                 stepList: [{
@@ -173,20 +186,7 @@
                     name: '拆券并领取',
                     portion: 2,
                     key: 4
-                }],
-                usercouponList: [{
-                    id: 1,
-                    name: 'LUU',
-                    time: '5.20 10:20:30',
-                    coupon: 28.88,
-                    role: 1,
-                }, {
-                    id: 2,
-                    name: 'LUU',
-                    time: '5.20 10:20:30',
-                    coupon: 28.88,
-                    role: 2,
-                }],
+                }]
             }
         },
         mounted(){
@@ -211,71 +211,105 @@
                
             },
             vmGetteam() {
-                getteam(this.source).then(res => {
+                getteam(this.teamId).then(res => {
                     if(!validatenull(res.data)){
                         let data = res.data;
-                        this.join = data.join;
-                        if(!this.join) {
-                            this.state = 1;
-                            return
-                        }
-                        this.role = data.role;
-                        // this.teamId = data.teamId;
-                        this.teamList = data.team;
-                        if(validatenull(this.teamList)){
-                            this.state = 1
-                        } else{
-                            this.teamId = this.teamList[0].teamId;
-                            if(this.teamList.length==1){
-                                this.state = 2;
-                            } else if(this.teamList.length<5){
-                                this.state = 3
-                            } else {
-                                this.state = 4;
+                        this.bind = data.bind;
+                        if(this.bind){
+                            this.join = data.join;
+                            if(this.join) {
+                                this.self = data.self;
+                                this.role = this.self.role;
                             }
-                            this.initMessage();
                         }
+                        if(validatenull(data.team)){
+                            this.state = 1;
+                            return;
+                        }
+                        this.teamList = data.team;
+                        this.teamId = this.teamList[0].teamId;
+                        if(this.teamList.length == 1) {
+                            this.state = 2;
+                        } else if(this.teamList.length < 5) {
+                            this.state = 3
+                        } else if(this.self.openTime) {
+                            this.state = 5;
+                            return;
+                        } else {
+                            this.state = 4;
+                        }
+                        this.initMessage();
                     }
                 });
             },
-            initTeamInfo(data) {
-                this.role = data.role;
-                this.join = data.join;
-            },
+            // initTeamInfo(data) {
+            //     this.role = data.role;
+            //     this.join = data.join;
+            // },
             initMessage() {
                 try{
+                    // eslint-disable-next-line no-undef
                     wx.miniProgram.postMessage({
-                        teamId: this.teamId
+                        data: {
+                            teamId: this.teamId
+                        }
                     });
                 }catch(e){
+                    // eslint-disable-next-line no-console
                     console.log(e);
                 }
             },
-            handleBth(state){
-                if(state == 1 || this.role == 2) {
+            handleBth(){
+                if(!this.bind) {
+                    try{
+                        // eslint-disable-next-line no-undef
+                        wx.miniProgram.postMessage({
+                            data: {
+                                teamId: this.teamId,
+                                source: this.source
+                            }
+                        });
+                        // eslint-disable-next-line no-undef
+                        wx.miniProgram.redirectTo({
+                            url: 'pages/oauth/oauth'
+                        });
+                    } catch(e) {
+                        // eslint-disable-next-line no-console
+                        console.log(e);
+                    }
+                    return;
+                }
+                
+                if(this.state == 1) {
                     this.vmJointeam();
-                } else if(state == 4){
+                } else if(this.state == 4){
+                    if(this.join == false){
+                        alert('您不在当前团中，无法领取优惠券');
+                        return;
+                    }
                     this.vmOpencoupon();
                 } else {
                     alert('点击右上角转发');
                 }
             },
             vmJointeam(){
-                jointeam(this.source, this.teamId).then(res => {
-                    let data = res.data;
-                    this.role = data.role;
-                    if(!this.teamId){
-                        this.teamId = data.teamId;
-                        this.initMessage();
-                    }
-                    this.teamList.push(data);
+                jointeam(this.source, this.teamId).then(() => {
+                    this.vmGetteam();
+                    // let data = res.data;
+                    // this.role = data.role;
+                    // if(!this.teamId){
+                    //     this.teamId = data.teamId;
+                    //     this.initMessage();
+                    // }
+                    // this.teamList.push(data);
                 })
             },
             vmOpencoupon(){
-                opencoupon().then(res => {
-                    if(res.success) {
-                        this.state = 5;
-                    }
+                opencoupon().then(() => {
+                    this.vmGetteam();
+                    // if(res.success) {
+                    //     this.state = 5;
+                    // }
                 })
             },
 
@@ -338,6 +372,19 @@
     }
     .img-coupon{
         width: 100%;
+    }
+    .coupon-box{
+        position: relative;
+    }
+    .coupon-value{
+        position: absolute;
+        top: 2rem;
+        left: 1.75rem;
+        font-size: 3.75rem;
+        font-weight:bold;
+        color:rgba(255,255,255,1);
+        font-family:MIUIEX-Bold;
+        line-height: 1;
     }
     .coupon-title{
         margin-top: .9rem;
@@ -502,7 +549,7 @@
         color: rgba(102,102,102,1);
         line-height: 1;
     }
-    .coupon-value{
+    .item-coupon-value{
         font-size: .75rem;
         font-family: PingFangSC-Medium;
         font-weight: 500;
