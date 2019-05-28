@@ -123,24 +123,26 @@
                 <img class="img-bg-bottom" src="../lib/bg-bottom.png" alt="">
             </footer>
         </article>
-        <aside class="aside" v-if="state==1 || (join===false&&state&&state<4) ">
-            <button class="btn-aside btn-openteam" @click="handleBth">
-                <img src="../lib/logo.png" alt="" width="19px"> 
-                <span class="btn-aside-text">立即参团</span>
-            </button>
-        </aside>
-        <aside class="aside" v-else-if="state==2 || state==3">
-            <button class="btn-aside btn-openteam" @click="handleBth">
-                <img src="../lib/logo.png" alt="" width="19px"> 
-                <span class="btn-aside-text">呼唤小伙伴</span>
-            </button>
-        </aside>
-        <aside class="aside" v-if="state==4 && join">
-            <button class="btn-aside btn-openteam" @click="handleBth">
-                <img src="../lib/logo.png" alt="" width="19px"> 
-                <span class="btn-aside-text">Give me five</span>
-            </button>
-        </aside>
+        <template v-if="state">
+            <aside class="aside" v-if="state==1 || (join==false&&state<4) ">
+                <button class="btn-aside btn-openteam" @click="handleBth">
+                    <img src="../lib/logo.png" alt="" width="19px"> 
+                    <span class="btn-aside-text">立即参团</span>
+                </button>
+            </aside>
+            <aside class="aside" v-else-if="state==2 || state==3">
+                <button class="btn-aside btn-openteam" @click="handleBth">
+                    <img src="../lib/logo.png" alt="" width="19px"> 
+                    <span class="btn-aside-text">呼唤小伙伴</span>
+                </button>
+            </aside>
+            <aside class="aside" v-else-if="state==4 && join">
+                <button class="btn-aside btn-openteam" @click="handleBth">
+                    <img src="../lib/logo.png" alt="" width="19px"> 
+                    <span class="btn-aside-text">Give me five</span>
+                </button>
+            </aside>
+        </template>
     </div>
 </template>
 
@@ -289,7 +291,11 @@
                     }
                     this.vmOpencoupon();
                 } else {
-                    alert('点击右上角转发');
+                    if(this.join == false){
+                        this.vmJointeam();
+                    }else{
+                        alert('点击右上角转发');
+                    }
                 }
             },
             vmJointeam(){
