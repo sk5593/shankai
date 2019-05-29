@@ -32,9 +32,8 @@
         })(document, window);
     </script>
     <script>
-      var IMGPrefix = location.href.split('/');
+      var IMGPrefix = location.pathname.split('/');
       IMGPrefix.pop();
-      IMGPrefix.push('img/givemefive/');
       IMGPrefix = IMGPrefix.join('/');
       var IMGArray = [
             'bg-bottom.png',
@@ -50,7 +49,7 @@
             IMGLoadFun = function (src) {
                 if (IMGCount < IMGLen) {
                     var imgObj = new Image();
-                    var imgSrc = 'IMGPrefix' + src;
+                    var imgSrc = IMGPrefix + "/img/givemefive/" + src;
                     imgObj.src = imgSrc
                     imgObj.onload = imgObj.onerror = IMGLoadFun(IMGArray[++IMGCount])
                 }

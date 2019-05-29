@@ -2,22 +2,22 @@
     <div class="container">
         <article class="content" :class="{'hasAside': state&&state!='5'}">
             <header class="header">
-                <img class="img-bg-header" src="/img/givemefive/bg-header.png" alt="">
+                <img class="img-bg-header" :src="IMGPrefix+'/img/givemefive/bg-header.png'" alt="">
                 <div class="bg-title textcenter">
-                    <div><img class="img-bg-title" src="/img/givemefive/bg-title.png" alt=""></div>
+                    <div><img class="img-bg-title" :src="IMGPrefix+'/img/givemefive/bg-title.png'" alt=""></div>
                     <div class="bg-title-word">
-                        <img class="img-bg-title-2" src="/img/givemefive/bg-title-2.png" alt="">
+                        <img class="img-bg-title-2" :src="IMGPrefix+'/img/givemefive/bg-title-2.png'" alt="">
                     </div>
                 </div>
             </header>
             <main class="main-coupon">
                 <section v-if="state&&state!=5" class="coupon-quota textcenter">
-                    <img class="img-coupon" src="/img/givemefive/coupon.png" alt="">
+                    <img class="img-coupon" :src="IMGPrefix+'/img/givemefive/coupon.png'" alt="">
                 </section>
                 <section v-else-if="state==5" class="coupon-quota textcenter">
                     <div class="coupon-box">
                         <div class="coupon-value">{{self.coupon}}</div>
-                        <img class="img-coupon" src="/img/givemefive/coupon_slices.png" alt="">
+                        <img class="img-coupon" :src="IMGPrefix+'/img/givemefive/coupon_slices.png'" alt="">
                     </div>
                 </section>
                 <section class="coupon-title textcenter">
@@ -120,25 +120,25 @@
                 </summary>
             </main>
             <footer class="footer">
-                <img class="img-bg-bottom" src="/img/givemefive/bg-bottom.png" alt="">
+                <img class="img-bg-bottom" :src="IMGPrefix+'/img/givemefive/bg-bottom.png'" alt="">
             </footer>
         </article>
         <template v-if="state">
-            <aside class="aside" v-if="state==1 || (join==false&&state<4) ">
+            <aside class="aside textcenter" v-if="state==1 || (join==false&&state<4) ">
                 <button class="btn-aside btn-openteam" @click="handleBth">
-                    <img src="/img/givemefive/logo.png" alt="" width="19px"> 
+                    <img :src="IMGPrefix+'/img/givemefive/logo.png'" alt="" width="19px"> 
                     <span class="btn-aside-text">立即参团</span>
                 </button>
             </aside>
-            <aside class="aside" v-else-if="state==2 || state==3">
+            <aside class="aside textcenter" v-else-if="state==2 || state==3">
                 <button class="btn-aside btn-openteam" @click="handleBth">
-                    <img src="/img/givemefive/logo.png" alt="" width="19px"> 
+                    <img :src="IMGPrefix+'/img/givemefive/logo.png'" alt="" width="19px"> 
                     <span class="btn-aside-text">呼唤小伙伴</span>
                 </button>
             </aside>
-            <aside class="aside" v-else-if="state==4 && join">
+            <aside class="aside textcenter" v-else-if="state==4 && join">
                 <button class="btn-aside btn-openteam" @click="handleBth">
-                    <img src="/img/givemefive/logo.png" alt="" width="19px"> 
+                    <img :src="IMGPrefix+'/img/givemefive/logo.png'" alt="" width="19px"> 
                     <span class="btn-aside-text">Give me five</span>
                 </button>
             </aside>
@@ -188,7 +188,9 @@
                     name: '拆券并领取',
                     portion: 2,
                     key: 4
-                }]
+                }],
+                // eslint-disable-next-line no-undef
+                IMGPrefix: IMGPrefix
             }
         },
         mounted(){
@@ -299,8 +301,12 @@
                 }
             },
             vmJointeam(){
-                jointeam(this.source, this.teamId).then(() => {
-                    this.vmGetteam();
+                jointeam(this.source, this.teamId).then(res => {
+                    if(res.success){
+                        this.vmGetteam();
+                    } else {
+                        alert(res.msg)
+                    }
                     // let data = res.data;
                     // this.role = data.role;
                     // if(!this.teamId){
@@ -594,6 +600,7 @@
     .btn-aside{
         height: $asideBtnHeight;
         width: 100%;
+        max-width: $pageWidthMaxPx;
         background: $userColor;
         color:rgba(255,255,255,1);
         line-height: 1;
