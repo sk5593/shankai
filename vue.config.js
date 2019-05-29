@@ -1,6 +1,6 @@
 // vue.config.js
 const entry = 'givemefive';
-const apiUrl = 'http://api-dev.yeedev.com/apis/c';
+const apiUrl = 'http://api-dev.yeedev.com';
 module.exports = {
     publicPath: '',
     outputDir: 'target/classes/META-INF/resources/webjars',
@@ -17,7 +17,7 @@ module.exports = {
         open: true,
         openPage: `${entry}.html`,
         proxy: {
-            '/v1/user-coupons': {
+            '/apis/c': {
                 target: apiUrl,
                 ws: true
             }

@@ -2,22 +2,22 @@
     <div class="container">
         <article class="content" :class="{'hasAside': state&&state!='5'}">
             <header class="header">
-                <img class="img-bg-header" src="/img/fivemefive/bg-header.png" alt="">
+                <img class="img-bg-header" src="/img/givemefive/bg-header.png" alt="">
                 <div class="bg-title textcenter">
-                    <div><img class="img-bg-title" src="/img/fivemefive/bg-title.png" alt=""></div>
+                    <div><img class="img-bg-title" src="/img/givemefive/bg-title.png" alt=""></div>
                     <div class="bg-title-word">
-                        <img class="img-bg-title-2" src="/img/fivemefive/bg-title-2.png" alt="">
+                        <img class="img-bg-title-2" src="/img/givemefive/bg-title-2.png" alt="">
                     </div>
                 </div>
             </header>
             <main class="main-coupon">
                 <section v-if="state&&state!=5" class="coupon-quota textcenter">
-                    <img class="img-coupon" src="/img/fivemefive/coupon.png" alt="">
+                    <img class="img-coupon" src="/img/givemefive/coupon.png" alt="">
                 </section>
                 <section v-else-if="state==5" class="coupon-quota textcenter">
                     <div class="coupon-box">
                         <div class="coupon-value">{{self.coupon}}</div>
-                        <img class="img-coupon" src="/img/fivemefive/coupon_slices.png" alt="">
+                        <img class="img-coupon" src="/img/givemefive/coupon_slices.png" alt="">
                     </div>
                 </section>
                 <section class="coupon-title textcenter">
@@ -111,7 +111,7 @@
                                 </div>
                                 <div class="jointeaminfo" flex-box="1">
                                     <div class="weixin-name">{{item.nickName}}</div>
-                                    <div class="userjointime">{{item.joinTime}}</div>
+                                    <div class="userjointime">{{formatTime(item.joinTime)}}</div>
                                 </div>
                                 <div class="item-coupon-value">{{item.coupon}}元</div>
                             </li>
@@ -120,25 +120,25 @@
                 </summary>
             </main>
             <footer class="footer">
-                <img class="img-bg-bottom" src="/img/fivemefive/bg-bottom.png" alt="">
+                <img class="img-bg-bottom" src="/img/givemefive/bg-bottom.png" alt="">
             </footer>
         </article>
         <template v-if="state">
             <aside class="aside" v-if="state==1 || (join==false&&state<4) ">
                 <button class="btn-aside btn-openteam" @click="handleBth">
-                    <img src="/img/fivemefive/logo.png" alt="" width="19px"> 
+                    <img src="/img/givemefive/logo.png" alt="" width="19px"> 
                     <span class="btn-aside-text">立即参团</span>
                 </button>
             </aside>
             <aside class="aside" v-else-if="state==2 || state==3">
                 <button class="btn-aside btn-openteam" @click="handleBth">
-                    <img src="/img/fivemefive/logo.png" alt="" width="19px"> 
+                    <img src="/img/givemefive/logo.png" alt="" width="19px"> 
                     <span class="btn-aside-text">呼唤小伙伴</span>
                 </button>
             </aside>
             <aside class="aside" v-else-if="state==4 && join">
                 <button class="btn-aside btn-openteam" @click="handleBth">
-                    <img src="/img/fivemefive/logo.png" alt="" width="19px"> 
+                    <img src="/img/givemefive/logo.png" alt="" width="19px"> 
                     <span class="btn-aside-text">Give me five</span>
                 </button>
             </aside>
@@ -318,7 +318,16 @@
                     // }
                 })
             },
-
+            add0 (m){return m<10?'0'+m:m },
+            formatTime(timestamp){
+                let time = new Date(parseInt(timestamp)*1000);
+                let m = time.getMonth()+1;
+                let d = time.getDate();
+                let h = time.getHours();
+                let mm = time.getMinutes();
+                let s = time.getSeconds();
+                return this.add0(m)+'.'+this.add0(d)+' '+this.add0(h)+':'+this.add0(mm)+':'+this.add0(s);
+            }
         }
     }
 </script>
