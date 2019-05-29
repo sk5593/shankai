@@ -156,17 +156,17 @@
                 config: {
                     valid: null,
                     validDate: ''
-                },
-                state: 0, // 1.初始状态；2.团长开团；3.有小伙伴加入（不满5人）；4.已满团（满5人）;5.已开券
-                role: 1, // 角色，1.团长；2.团员
-                join: false, // 是否已加入
-                bind: false, //是否已绑定小米账号
-                scene: '', // 来源
-                teamId: '', // 团ID
-                self: {}, //个人信息
-                teamList: [],
-                step: '2', // 当前进行的步骤
-                stepList: [{
+                    },
+                    state: 0, // 1.初始状态；2.团长开团；3.有小伙伴加入（不满5人）；4.已满团（满5人）;5.已开券
+                    role: 1, // 角色，1.团长；2.团员
+                    join: false, // 是否已加入
+                    bind: false, //是否已绑定小米账号
+                    scene: '', // 来源
+                    teamId: '', // 团ID
+                    self: {}, //个人信息
+                    teamList: [],
+                    step: '2', // 当前进行的步骤
+                    stepList: [{
                     id: 1,
                     name: '开团',
                     portion: 2,
@@ -264,7 +264,6 @@
                 }
             },
             handleBth(){
-                console.log('123333333333')
                 if(!this.bind) {
                     try{
                         // eslint-disable-next-line no-undef
@@ -590,15 +589,17 @@
 
     .aside{
         position: fixed;
-        bottom: env(safe-area-inset-bottom);
+        bottom: 0;
         left: 0;
         right: 0;
+        padding-bottom: env(safe-area-inset-bottom);
+        background: #FAF5EC;
     }
-    @supports not(bottom: env(safe-area-inset-bottom)){
-        .aside{
-            bottom: 0;
-        }
-    }
+    // @supports not(bottom: env(safe-area-inset-bottom)){
+    //     .aside{
+    //         bottom: 0;
+    //     }
+    // }
     .btn-aside{
         height: $asideBtnHeight;
         width: 100%;
