@@ -161,7 +161,7 @@
                 role: 1, // 角色，1.团长；2.团员
                 join: false, // 是否已加入
                 bind: false, //是否已绑定小米账号
-                source: '', // 来源
+                scene: '', // 来源
                 teamId: '', // 团ID
                 self: {}, //个人信息
                 teamList: [],
@@ -196,7 +196,7 @@
         mounted(){
             let token = getQueryString('timeline') || getToken();
             if(token) setToken(token);
-            this.source = getQueryString('source');
+            this.scene = getQueryString('scene');
             this.teamId = getQueryString('teamId');
             this.init();
         },
@@ -271,7 +271,8 @@
                         wx.miniProgram.postMessage({
                             data: {
                                 teamId: this.teamId,
-                                source: this.source
+                                scene: this.scene,
+                                redirect: true
                             }
                         });
                         // eslint-disable-next-line no-undef
@@ -302,7 +303,7 @@
                 }
             },
             vmJointeam(){
-                jointeam(this.source, this.teamId).then(res => {
+                jointeam(this.scene, this.teamId).then(res => {
                     if(res.success){
                         this.vmGetteam();
                     } else {
@@ -607,7 +608,7 @@
         line-height: 1;
         cursor: pointer;
         touch-action: manipulation;
-        &:hover{
+        &:active{
             background: $userColor*.8;
         }
     }
