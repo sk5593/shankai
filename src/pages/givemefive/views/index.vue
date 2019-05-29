@@ -28,7 +28,7 @@
                     </div>
                     <div v-else-if="state==2||state==3">
                         <div class="coupon-title-main">瓜分神券进行中</div>
-                        <div class="coupon-title-endtime">{{config.validDate}} 24:00:00结束</div>
+                        <div class="coupon-title-endtime">{{config.validDate}}结束</div>
                     </div>
                     <div v-else-if="state==4">
                         <div class="coupon-title-main">小伙伴已就位，点击拆开</div>
@@ -43,7 +43,7 @@
                     <ul class="" flex="main:justify">
                         <li class="user-item" v-for="item in teamList" :key="'useritemreal'+item.id">
                             <div class="user-headimg real" flex="main:center cross:center">
-                                <img :src="item.avatarUrl" height="100%" alt="">
+                                <img :src="item.avatarUrl" width="100%" alt="">
                             </div>
                             <div v-if="item.role==1" class="user-name textcenter">团长</div>
                         </li>
@@ -105,7 +105,7 @@
                             <li v-for="item in teamList" class="item-coupondis" :key="'usercouponitem'+item.id" flex="cross:center">
                                  <div class="user-item">
                                     <div class="user-headimg real" flex="main:center cross:center">
-                                        <img :src="item.avatarUrl" height="100%" alt="">
+                                        <img :src="item.avatarUrl" width="100%" alt="">
                                     </div>
                                     <div v-if="item.role==1" class="user-name textcenter">团长</div>
                                 </div>
@@ -264,6 +264,7 @@
                 }
             },
             handleBth(){
+                console.log('123333333333')
                 if(!this.bind) {
                     try{
                         // eslint-disable-next-line no-undef
@@ -275,7 +276,7 @@
                         });
                         // eslint-disable-next-line no-undef
                         wx.miniProgram.redirectTo({
-                            url: 'pages/oauth/oauth'
+                            url: '/pages/oauth/oauth'
                         });
                     } catch(e) {
                         // eslint-disable-next-line no-console
@@ -343,11 +344,6 @@
         background: #FAF5EC;
         padding-bottom: env(safe-area-inset-bottom);
         font-family: -apple-system,Helvetica,sans-serif;
-    }
-    @supports(bottom: env(safe-area-inset-bottom)){
-        div{
-            margin-bottom: env(safe-area-inset-bottom);
-        }
     }
 </style>
 
@@ -593,9 +589,14 @@
 
     .aside{
         position: fixed;
-        bottom: 0;
+        bottom: env(safe-area-inset-bottom);
         left: 0;
         right: 0;
+    }
+    @supports not(bottom: env(safe-area-inset-bottom)){
+        .aside{
+            bottom: 0;
+        }
     }
     .btn-aside{
         height: $asideBtnHeight;
@@ -606,6 +607,9 @@
         line-height: 1;
         cursor: pointer;
         touch-action: manipulation;
+        &:hover{
+            background: $userColor*.8;
+        }
     }
     .btn-aside-text{
         vertical-align: middle; 
