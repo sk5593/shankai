@@ -24,7 +24,7 @@
                     <div v-if="state==1" class="coupon-title-main">人气618，省钱攻略来袭</div>
                     <div v-else-if="join===false">
                         <div class="coupon-title-main">您的小伙伴邀您走向省钱巅峰</div>
-                        <div class="coupon-title-endtime">2019-06-20 24:00:00结束</div>
+                        <div class="coupon-title-endtime">{{config.validDate}}结束</div>
                     </div>
                     <div v-else-if="state==2||state==3">
                         <div class="coupon-title-main">瓜分神券进行中</div>
@@ -32,7 +32,7 @@
                     </div>
                     <div v-else-if="state==4">
                         <div class="coupon-title-main">小伙伴已就位，点击拆开</div>
-                        <div class="coupon-title-endtime">{{config.validDate}} 24:00:00结束</div>
+                        <div class="coupon-title-endtime">{{config.validDate}}结束</div>
                     </div>
                     <div v-else-if="state==5">
                         <div class="coupon-title-endtime">优惠券将于6月16日前发放到有品账户，</div>
@@ -143,6 +143,14 @@
                 </button>
             </aside>
         </template>
+        <div class="mask" v-show="maskFlag" @click="maskFlag=false">
+            <div class="mask-img">
+                <img class="img-jiantou" :src="IMGPrefix+'/img/givemefive/jiantou.png'" alt="">
+            </div>
+            <div class="mask-word">
+                <div class="mask-word-con">点击 "转发" 邀请好友</div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -190,7 +198,8 @@
                     key: 4
                 }],
                 // eslint-disable-next-line no-undef
-                IMGPrefix: IMGPrefix
+                IMGPrefix: IMGPrefix,
+                maskFlag: false
             }
         },
         mounted(){
@@ -297,7 +306,7 @@
                     if(this.join == false){
                         this.vmJointeam();
                     }else{
-                        alert('点击右上角转发');
+                        this.maskFlag = true;
                     }
                 }
             },
@@ -377,7 +386,7 @@
     }
     .bg-title{
         position: absolute;
-        top: 4.025rem;
+        top: 2.025rem;
         width: 100%;
         .img-bg-title{
             width: 17rem;
@@ -617,6 +626,37 @@
         vertical-align: middle; 
         margin-left: 10px;
         font-size: 16px;
+        font-family:PingFangSC-Regular;
+    }
+
+    .mask{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, .7);
+    }
+    .mask-img{
+        text-align: right;
+    }
+    .img-jiantou{
+        width: 5.275rem;
+    }
+    .mask-word{
+        position: relative;
+    }
+    .mask-word-con{
+        position: absolute;
+        top: 0.525rem;
+        right: 1.75rem;
+        width: 10rem;
+        line-height: 2.5rem;
+        background: rgba(206,164,96,1);
+        border-radius: 0.25rem;
+        color: #fff;
+        text-align: center;
+        font-size: .9rem;
         font-family:PingFangSC-Regular;
     }
 </style>
