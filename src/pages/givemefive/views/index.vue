@@ -323,15 +323,15 @@
                     if(!res.success){
                         alert(res.msg);
                     }
-                    this.vmGetteam();
+                    this.init();
                 }).catch(err => {
                     alert(err.msg);
-                    this.vmGetteam();
+                    this.init();
                 })
             },
             vmOpencoupon(){
                 opencoupon().then(() => {
-                    this.vmGetteam();
+                    this.init();
                 })
             },
             add0 (m){return m<10?'0'+m:m },
