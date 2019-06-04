@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <article class="content" :class="{'hasAside': state&&state!='5'}">
+        <article class="content" :class="{'hasAside': state&&config.valid&&(state<4||(state==4&&join))}">
             <header class="header">
                 <img class="img-bg-header" :src="IMGPrefix+'/img/givemefive/bg-header.png'" alt="">
                 <div class="bg-title textcenter">
@@ -21,9 +21,14 @@
                     </div>
                 </section>
                 <section class="coupon-title textcenter">
-                    <div v-if="state==1" class="coupon-title-main">人气618，省钱攻略来袭</div>
+                    <div v-if="!config.valid">
+                        <div class="coupon-title-main">很遗憾，活动结束！下次活动再接再厉哦</div>
+                        <!-- <div class="coupon-title-endtime">{{config.validDate}}结束</div> -->
+                    </div>
+                    <div v-else-if="state==1" class="coupon-title-main">人气618，省钱攻略来袭</div>
                     <div v-else-if="join===false">
-                        <div class="coupon-title-main">您的小伙伴邀您走向省钱巅峰</div>
+                        <div class="coupon-title-main" v-if="state>=4">很遗憾，当前拼团人数已满</div>
+                        <div class="coupon-title-main" v-else>您的小伙伴邀您走向省钱巅峰</div>
                         <div class="coupon-title-endtime">{{config.validDate}}结束</div>
                     </div>
                     <div v-else-if="state==2||state==3">
@@ -76,7 +81,7 @@
                             </li>
                         </ul>
                     </section>
-                    <summary class="summary" v-if="step!='4'">
+                    <summary class="summary">
                         <div class="summary-title" flex="cross:center">
                             <div flex-box="1"><hr class="summary-title-line"></div>
                             <div class="summary-title-word">规则描述</div>
@@ -119,11 +124,14 @@
                     </div>
                 </summary>
             </main>
-            <footer class="footer">
+            <footer class="footer visibility" v-if="!config.valid&&!state">
+                <img class="img-bg-bottom" :src="IMGPrefix+'/img/givemefive/bg-bottom.png'" alt="">
+            </footer>
+            <footer class="footer" :class="{'isOver': !config.valid&&!state}">
                 <img class="img-bg-bottom" :src="IMGPrefix+'/img/givemefive/bg-bottom.png'" alt="">
             </footer>
         </article>
-        <template v-if="state">
+        <template v-if="state && config.valid">
             <aside class="aside textcenter" v-if="state==1 || (join==false&&state<4) ">
                 <button class="btn-aside btn-openteam" @click="handleBth">
                     <img :src="IMGPrefix+'/img/givemefive/logo.png'" alt="" width="19px"> 
@@ -164,17 +172,16 @@
                 config: {
                     valid: null,
                     validDate: ''
-                    },
-                    state: 0, // 1.初始状态；2.团长开团；3.有小伙伴加入（不满5人）；4.已满团（满5人）;5.已开券
-                    role: 1, // 角色，1.团长；2.团员
-                    join: false, // 是否已加入
-                    bind: false, //是否已绑定小米账号
-                    scene: '', // 来源
-                    teamId: '', // 团ID
-                    self: {}, //个人信息
-                    teamList: [],
-                    step: '2', // 当前进行的步骤
-                    stepList: [{
+                },
+                state: 0, // 1.初始状态；2.团长开团；3.有小伙伴加入（不满5人）；4.已满团（满5人）;5.已开券
+                role: 1, // 角色，1.团长；2.团员
+                join: false, // 是否已加入
+                bind: false, //是否已绑定小米账号
+                scene: '', // 来源
+                teamId: '', // 团ID
+                self: {}, //个人信息
+                teamList: [],
+                stepList: [{
                     id: 1,
                     name: '开团',
                     portion: 2,
@@ -199,7 +206,7 @@
                 }],
                 // eslint-disable-next-line no-undef
                 IMGPrefix: IMGPrefix,
-                maskFlag: false
+                maskFlag: false,
             }
         },
         mounted(){
@@ -212,13 +219,14 @@
         methods: {
             init(){
                 config().then(res => {
+                    // res.data.valid = false;
                     if(res.data){
                         this.config = res.data
                     }
                     if(this.config.valid){
                         this.vmGetteam();
                     } else {
-                        alert('活动失效');
+                        this.state = 1;
                     }
                 })
                
@@ -312,26 +320,18 @@
             },
             vmJointeam(){
                 jointeam(this.scene, this.teamId).then(res => {
-                    if(res.success){
-                        this.vmGetteam();
-                    } else {
-                        alert(res.msg)
+                    if(!res.success){
+                        alert(res.msg);
                     }
-                    // let data = res.data;
-                    // this.role = data.role;
-                    // if(!this.teamId){
-                    //     this.teamId = data.teamId;
-                    //     this.initMessage();
-                    // }
-                    // this.teamList.push(data);
+                    this.vmGetteam();
+                }).catch(err => {
+                    alert(err.msg);
+                    this.vmGetteam();
                 })
             },
             vmOpencoupon(){
                 opencoupon().then(() => {
                     this.vmGetteam();
-                    // if(res.success) {
-                    //     this.state = 5;
-                    // }
                 })
             },
             add0 (m){return m<10?'0'+m:m },
@@ -351,7 +351,6 @@
 <style>
     body{
         background: #FAF5EC;
-        padding-bottom: env(safe-area-inset-bottom);
         font-family: -apple-system,Helvetica,sans-serif;
     }
 </style>
@@ -658,5 +657,18 @@
         text-align: center;
         font-size: .9rem;
         font-family:PingFangSC-Regular;
+    }
+    .footer{
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    .footer.isOver{
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding-bottom: 0; 
+    }
+    .footer.visibility{
+        visibility: hidden;
     }
 </style>

@@ -15,7 +15,7 @@ import 'nprogress/nprogress.css' // progress bar style
 axios.defaults.timeout = 15000;
 //返回其他状态吗
 axios.defaults.validateStatus = function (status) {
-  return status >= 200 && status <= 500; // 默认的
+  return status >= 200 && status <= 509; // 默认的
 };
 //跨域请求，允许保存cookie
 axios.defaults.withCredentials = true;
@@ -44,17 +44,17 @@ axios.interceptors.response.use(res => {
   NProgress.done();
   const status = res.status || 200
 //   const statusWhiteList = website.statusWhiteList || [];
-  const message = res.data.msg || res.statusText || '未知错误';
+  // const message = res.data.msg || res.statusText || '未知错误';
   //如果在白名单里则自行catch逻辑处理
 //   if (statusWhiteList.includes(status)) return Promise.reject(res);
   // 如果请求为非200否者默认统一处理
   if (status != 200) {
-    return Promise.reject(new Error(message))
+    return Promise.reject(res.data)
   }
   return res.data;
 }, error => {
   NProgress.done();
-  return Promise.reject(new Error(error));
+  return Promise.reject(error);
 })
 
 export default axios;
