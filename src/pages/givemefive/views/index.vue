@@ -21,28 +21,30 @@
                     </div>
                 </section>
                 <section class="coupon-title textcenter">
-                    <div v-if="!config.valid">
+                    <div v-if="config.valid===false">
                         <div class="coupon-title-main">很遗憾，活动结束！下次活动再接再厉哦</div>
                         <!-- <div class="coupon-title-endtime">{{config.validDate}}结束</div> -->
                     </div>
-                    <div v-else-if="state==1" class="coupon-title-main">人气618，省钱攻略来袭</div>
-                    <div v-else-if="join===false">
-                        <div class="coupon-title-main" v-if="state>=4">很遗憾，当前拼团人数已满</div>
-                        <div class="coupon-title-main" v-else>您的小伙伴邀您走向省钱巅峰</div>
-                        <div class="coupon-title-endtime">{{config.validDate}}结束</div>
-                    </div>
-                    <div v-else-if="state==2||state==3">
-                        <div class="coupon-title-main">瓜分神券进行中</div>
-                        <div class="coupon-title-endtime">{{config.validDate}}结束</div>
-                    </div>
-                    <div v-else-if="state==4">
-                        <div class="coupon-title-main">小伙伴已就位，点击拆开</div>
-                        <div class="coupon-title-endtime">{{config.validDate}}结束</div>
-                    </div>
-                    <div v-else-if="state==5">
-                        <div class="coupon-title-endtime">优惠券将于6月16日前发放到有品账户，</div>
-                        <div class="coupon-title-endtime">可移至有品APP内查看并使用</div>
-                    </div>
+                    <template v-else-if="config.valid">
+                        <div v-if="state==1" class="coupon-title-main">人气618，省钱攻略来袭</div>
+                        <div v-else-if="join==false">
+                            <div class="coupon-title-main" v-if="state>=4">很遗憾，当前拼团人数已满</div>
+                            <div class="coupon-title-main" v-else>您的小伙伴邀您走向省钱巅峰</div>
+                            <div class="coupon-title-endtime">{{config.validDate}}结束</div>
+                        </div>
+                        <div v-else-if="state==2||state==3">
+                            <div class="coupon-title-main">瓜分神券进行中</div>
+                            <div class="coupon-title-endtime">{{config.validDate}}结束</div>
+                        </div>
+                        <div v-else-if="state==4">
+                            <div class="coupon-title-main">小伙伴已就位，点击拆开</div>
+                            <div class="coupon-title-endtime">{{config.validDate}}结束</div>
+                        </div>
+                        <div v-else-if="state==5">
+                            <div class="coupon-title-endtime">优惠券将于6月16日前发放到有品账户，</div>
+                            <div class="coupon-title-endtime">可移至有品APP内查看并使用</div>
+                        </div>
+                    </template>
                 </section>
                 <section class="user-list" v-if="state==2||state==3||state==4">
                     <ul class="" flex="main:justify">
